@@ -9,8 +9,8 @@ while true; do
     read -p "Are you sure you want to continue? [y/n] " yn
     case $yn in
 	[Yy]* ) 
-		DEFAULT_PATH=$HOME
-		echo -e "\nDefault Installation directory is $DEFAULT_PATH/sudoSU" 
+		DEFAULT_PATH=$HOME/sudoSU
+		echo -e "\nDefault Installation directory is $DEFAULT_PATH" 
 		while true; do
     			read -p "Do you wish to change the directory? [y/n] " yn
     				case $yn in
@@ -24,7 +24,9 @@ while true; do
 		done
 	echo  "moving necessary files to $FINAL_PATH ..."
 	mkdir $FINAL_PATH
-	cp -vr ./ $FINAL_PATH
+	cp -r ./bin $FINAL_PATH
+	cp -r ./LICENSE $FINAL_PATH
+	cp -r ./README.md $FINAL_PATH
 	#cp config_format.txt $FINAL_PATH
 	echo  "Done Moving..."
 	cd $FINAL_PATH
@@ -67,10 +69,7 @@ while true; do
 	sleep 1
 	echo "App Launcher created..."
 	sleep 2
-	echo "sudoSU Installation Complete..."
-
-	
-	echo "Done Installing... :)"; break;;
+	echo "sudoSU Installation Complete..."; break;;
 [Nn]* ) exit;;
 * ) echo "Please answer y or n.";;
 esac
