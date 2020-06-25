@@ -2,6 +2,7 @@ import ntpath
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+from pathlib import Path
 
 # makes a builder to make GUI rom xml glade file
 #makes the preference window, sets geometry,and connects 
@@ -14,14 +15,12 @@ class preference_window():
         self.parent = parent
         self.data  = self.parent.props.main_config_data
         self.run=1
-        self.XML = parent.props.UiPath + "main/preference_win.glade"
-
+        self.glade_file=str(Path(__file__).parent / "preference_win.glade")
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(self.XML)
+        self.builder.add_from_file(self.glade_file)
         self.window2 = self.builder.get_object("preference_window ") 
         self.builder.connect_signals(self)
-        
-    
+           
         self.builder.get_object("width").set_text(str(self.data[3].rstrip()))
         self.builder.get_object("height").set_text(str(self.data[4].rstrip()))
         self.builder.get_object("project_dir").set_text(self.parent.props.sudoSU_projects) 

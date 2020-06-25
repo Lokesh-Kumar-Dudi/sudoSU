@@ -11,6 +11,7 @@ home= str(Path.home())
 import open_project
 import new_project
 import preference_win
+import dialog
 class main:
     def __init__(self,parent,title="",subtitle=""):
         self.parent = parent
@@ -91,20 +92,8 @@ class main:
         self.parent.send_message("Saved Project: "+self.parent.props.curr_project,1)
 
     def close_clicked(self,widget):
-        self.builder = Gtk.Builder()
-        self.glade_file = self.parent.props.UiPath + "main/dialog.glade"
-        self.builder.add_from_file(self.glade_file)
-        self.save_dialog = self.builder.get_object("save_dialog")  
-        self.save_dialog.show_all()
-        self.builder.connect_signals(self)   
-        
-    def close_project(self,widget):
-        self.parent.iconview.refresh(self.parent.props.sudoSU_projects)
-        self.parent.workflow_treeview.refresh(self.parent.props.sudoSU_projects)
-        self.parent.send_message("Closed Project: "+self.parent.props.curr_project,1)
-        self.parent.props.curr_project=None
-        self.parent.home_obj.set_assets(None)
-        self.save_dialog.destroy()
+        close_project(self.parent)
+         
 
 
     def menu_button_clicked(self,widget):
@@ -114,8 +103,26 @@ class main:
 
     def preference_button_clicked(self,widget):
         preference_win.preference_window(self.parent)
+    
     def help_button_clicked(self,widget):
-        pass
+        dlg_obj = dialog.dialog(self.parent)
+        main_dialog = dlg_obj.main_box
+        dlg_obj.label.destroy()
+        linkbutton = Gtk.LinkButton.new_with_label("https://github.com/Lokesh-Kumar-Dudi/sudoSU/wiki","Read the Official Documentation")
+        dlg_obj.box.pack_start(linkbutton,True,True,0)
+        main_dialog.show_all() 
+    
+
+
+class close_project:
+    def __init__(self,parent):
+        self.parent = parent
+        self.builder = Gtk.Builder()
+        self.glade_file=str(Path(__file__).parent / "save_dialog.glade")
+        self.builder.add_from_file(self.glade_file)
+        self.save_dialog = self.builder.get_object("save_dialog")  
+        self.save_dialog.show_all()
+        self.builder.connect_signals(self)  
     
     def save_close(self,widget):
         if self.parent.props.curr_project!=None:
@@ -138,7 +145,13 @@ class main:
             self.save_dialog.destroy()
         except:
             pass
-
+    def close(self,widget):
+        self.parent.iconview.refresh(self.parent.props.sudoSU_projects)
+        self.parent.workflow_treeview.refresh(self.parent.props.sudoSU_projects)
+        self.parent.send_message("Closed Project: "+self.parent.props.curr_project,1)
+        self.parent.props.curr_project=None
+        self.parent.home_obj.set_assets(None)
+        self.save_dialog.destroy()
 
 
 

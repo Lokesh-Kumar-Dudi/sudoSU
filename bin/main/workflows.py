@@ -18,30 +18,29 @@ def assemble(file, arg1, arg2):
     f2.close()
 
 
-class treeview(Gtk.Box):
+class treeview():
 
     def __init__(self,parent):
 
         self.parent = parent
-        self.vbox = Gtk.Box()
-        self.parent = parent
-        self.glade_file = parent.props.UiPath + "main/workflow.glade"
+        self.vbox = Gtk.Box() 
+        self.glade_file=str(Path(__file__).parent / "workflow.glade")
         self.store = Gtk.TreeStore(str)
         self.lis=[]
         self.refresh( home+"/sudoSU/Projects/")
         
     
-        treeview = Gtk.TreeView(self.store)
-        tvcolumn = Gtk.TreeViewColumn('Workflows')
-        treeview.append_column(tvcolumn)
-        treeview.connect("row-activated", self.on_activated)
+        self.treeview = Gtk.TreeView(self.store)
+        self.tvcolumn = Gtk.TreeViewColumn('Workflows')
+        self.treeview.append_column(self.tvcolumn)
+        self.treeview.connect("row-activated", self.on_activated)
 
 
-        cell = Gtk.CellRendererText()
-        tvcolumn.pack_start(cell, True)
-        tvcolumn.add_attribute(cell, 'text', 0)
+        self.cell = Gtk.CellRendererText()
+        self.tvcolumn.pack_start(self.cell, True)
+        self.tvcolumn.add_attribute(self.cell, 'text', 0)
 
-        self.vbox.pack_start(treeview,True,True,0)
+        self.vbox.pack_start(self.treeview,True,True,0)
 
     def on_activated(self,widget,row,column):  
         model = widget.get_model()
@@ -86,3 +85,76 @@ class treeview(Gtk.Box):
                 self.store.append(None,[ntpath.basename(i)])
         except:
             pass
+
+
+class append_dlg:
+    def __init__(self,parent,typ=0):
+        self.parent = parent
+        self.typ =typ
+        self.glade_file=str(Path(__file__).parent / "workflow_append.glade")
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(self.glade_file)
+        self.builder.connect_signals(self)
+        self.append_dlg = self.builder.get_object("append_workflow")
+        self.wf_list = self.builder.get_object("workflow_store")
+        self.prefix = self.builder.get_object("prefix")
+        self.refresh( self.parent.props.curr_project)
+        self.append_dlg.show_all()
+
+
+    def refresh(self,arg):
+        if arg==None:
+            pass
+        else:
+            lis = [name for name in glob.glob(arg+'/workflows/*.sh')]
+            lis.sort()
+            for i in lis:
+                self.wf_list.append([ntpath.basename(i)])
+    def append(self,widget):
+        obj = self.builder.get_object('list')
+        tree_iter = obj.get_active_iter()
+        if tree_iter is not None:
+            model = obj.get_model()
+            row_id = model[tree_iter][0]
+        f = open(self.parent.props.curr_project+"/workflows/"+row_id,'a+')
+        if self.typ:
+            f.write("prefix="+self.prefix.get_text()+"\n")
+            f.write(self.parent.append_cmd+"\n")
+            f.write("infile=$prefix.$infile\n")
+        else:
+            f.write(self.parent.append_cmd+"\n")
+        f.close()
+        self.append_dlg.destroy()
+
+    def create(self,widget):
+        create_dlg(self.parent,self.wf_list)
+    
+    def cancel(self,widget):
+        self.append_dlg.destroy()
+
+class create_dlg:
+    def __init__(self,parent,lis):
+        self.parent = parent
+        self.lis = lis
+        self.glade_file=str(Path(__file__).parent / "workflow_create.glade")
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(self.glade_file)
+        self.create_dlg = self.builder.get_object("create_workflow")
+        self.builder.connect_signals(self)
+        self.create_dlg.show_all()
+    
+    def done(self,widget):
+        self.new_name =self.builder.get_object("new_name").get_text()
+        try:
+            f = open(self.parent.props.curr_project+"/workflows/"+self.new_name,'w')
+            f.write("infile=input_file\n")
+            wf_name,ext = os.path.splitext(self.new_name)
+            #f.write("prefix="+wf_name+"\n")
+            f.close()
+            self.lis.append([self.new_name])
+            self.parent.workflow_treeview.refresh(self.parent.props.curr_project)
+            self.create_dlg.destroy()
+        except:
+            self.parent.send_message("No 'workflows' folder found in the Project",1)
+
+

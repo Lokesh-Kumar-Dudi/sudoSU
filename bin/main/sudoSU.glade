@@ -739,7 +739,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">5</property>
-                                <property name="label" translatable="yes">Project Files:</property>
+                                <property name="label" translatable="yes">Project Files</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -844,7 +844,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="margin_left">5</property>
-                                    <property name="label" translatable="yes">Selected Files:</property>
+                                    <property name="label" translatable="yes">Selected Files</property>
                                     <property name="xalign">0</property>
                                   </object>
                                   <packing>

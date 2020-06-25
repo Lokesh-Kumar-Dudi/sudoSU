@@ -5,7 +5,7 @@ import open_project
 import new_project 
 import header
 import home
-import workflow_append
+import workflows
 import re
 import os
 import sys
@@ -123,7 +123,7 @@ class Main:
     
     def workflow_append(self,command,typ):
         self.append_cmd= command
-        workflow_append.append_dlg(self,typ)
+        workflows.append_dlg(self,typ)
 
     def get_outname(self,arg,infile=None,parameters=None):
         """
@@ -143,7 +143,7 @@ class Main:
         else:
             perm=""
         if infile:
-            if arg=="su":
+            if arg=="su":                              
                 outfile = infile.replace('segy','su') 
             elif arg=="ps":
                 outfile = infile.replace('su','ps')

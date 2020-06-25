@@ -27,8 +27,7 @@ def get_size(arg):
 class new_project_create():
     def __init__(self, parent):
         self.parent = parent
-        
-        self.glade_file = parent.props.UiPath + "main/new_project.glade"
+        self.glade_file=str(Path(__file__).parent / "new_project.glade")
         self.builder = Gtk.Builder()
         self.builder.add_from_file(self.glade_file)
         self.prompt1 = self.builder.get_object("prompt1")
