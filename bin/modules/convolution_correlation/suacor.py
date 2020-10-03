@@ -5,47 +5,43 @@ from pathlib import Path
 import ntpath
 import os
 
-class sugain(Gtk.Box):
+class suacor(Gtk.Box):
     def __init__(self,parent):
         self.parent = parent
-        self.glade_file=str(Path(__file__).parent / "sugain.glade")
+        self.glade_file=str(Path(__file__).parent / "suacor.glade")
         self.builder = Gtk.Builder()
         self.builder.add_from_file(self.glade_file)
-        self.main_box = self.builder.get_object("sugain")
+        self.main_box = self.builder.get_object("suacor")
         self.title_box = self.builder.get_object("tab_title")
         self.builder.connect_signals(self)
-        self.list = ["agc","gagc","wagc","tpow","epow","gpow","etpow","scale","norm","maxbal","pbal","qbal",
-                     "mbal","vred","trap","clip","pclip","qclip","nclip","mark","bias","panel"]
-        self.jon = self.builder.get_object("jon")
+        self.list = ["ntout","norm","sym"]
         self.output_files = self.builder.get_object("output_files")
         self.append_wf_cmd = ""
         self.parameters=""
 
     def set_parameters(self, widget):
         self.parameters=""
-        if self.jon.get_active():
-            self.parameters += "tpow=2 gpow=0.5 qclip=0.95"
-        else:
-            for item in self.list:
-                obj = self.builder.get_object(item)
-                if type(obj)==type(Gtk.Entry()):
-                    if obj.get_text()!="":
-                        self.parameters+=item+"="+obj.get_text()+" "
-                    else:
-                        pass
-                elif type(obj)==type(Gtk.CheckButton()):
-                    if obj.get_active():
-                        self.parameters+=item+"="+"1 "
-                    else:
-                        pass
-                elif type(obj)==type(Gtk.RadioButton()):
-                    if obj.get_active() and self.builder.get_object("wagc").get_text()!="":
-                        self.parameters+=item+"="+"1 "
-                    else:
-                        pass
+        for item in self.list:
+            obj = self.builder.get_object(item)
+            if type(obj)==type(Gtk.Entry()):
+                if obj.get_text()!="":
+                    self.parameters+=item+"="+obj.get_text()+" "
+                else:
+                    pass
+            elif type(obj)==type(Gtk.CheckButton()):
+                if obj.get_active():
+                    self.parameters+=item+"="+"1 "
+                else:
+                    pass
+            elif type(obj)==type(Gtk.RadioButton()):
+                if obj.get_active() and self.builder.get_object("wagc").get_text()!="":
+                    self.parameters+=item+"="+"1 "
+                else:
+                    pass
+
         if self.parameters!="":
-            self.command = "sugain < $infile "+ self.parameters + " >" + "$outfile"
-            self.append_wf_cmd ="sugain < $infile "+ self.parameters + " >" + "$prefix.$infile"
+            self.command = "suacor < $infile "+ self.parameters + " >" + "$outfile"
+            self.append_wf_cmd ="suacor < $infile "+ self.parameters + " >" + "$prefix.$infile"
             self.parent.send_command(self.command,1)
         else:
             self.parent.send_message("No Parameters choosen",1)
@@ -64,7 +60,7 @@ class sugain(Gtk.Box):
         if len(self.parent.input_files)==len(self.parent.output_files):
             self.parent.console.set_current_page(2)
             for i,input_file in enumerate(self.parent.input_files):
-                cmd = "sugain"+ " < " + input_file + " "+self.parameters \
+                cmd = "suacor"+ " < " + input_file + " "+self.parameters \
                     +" > "+self.parent.output_files[i]
                 self.parent.terminal.run_command(cmd+"\n")
                 self.parent.history.append(cmd)
@@ -103,17 +99,17 @@ class sugain(Gtk.Box):
         builder = Gtk.Builder()
         builder.add_from_file(self.glade_file)
         help_dlg = builder.get_object("help")
-        help_dlg.set_title("SUGAIN Help")
+        help_dlg.set_title("SUACOR Help")
         help_dlg.show_all()
         
 
     def destroy(self, widget):
         self.main_box.destroy()
-        self.parent.tabs['SUGAIN'] = 0
+        self.parent.tabs['SUACOR'] = 0
 
 
 class nb_page(Gtk.Box):
     def __init__(self,parent):
-        self.main_class = sugain(parent)
+        self.main_class = suacor(parent)
         self.page = self.main_class.main_box
         self.title = self.main_class.title_box  

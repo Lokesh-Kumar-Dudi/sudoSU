@@ -33,7 +33,7 @@ while true; do
 	echo "Setting up sudoSU..."
 	sleep 1
 	echo "Creating Terminal Command 'sudoSU'..."
-	echo "python3 $FINAL_PATH/bin/main/sudoSU.py &">> sudoSU.sh
+	echo "python3 $FINAL_PATH/bin/main/sudoSU &">> sudoSU.sh
 	sudo chmod +x sudoSU.sh
 	if [ -d ~/bin ] 
 	then

@@ -11,6 +11,7 @@ import os
 import sys
 import time
 import gi
+import subprocess
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import warnings
@@ -154,5 +155,11 @@ class Main:
         return perm+outfile
 
 if __name__ == '__main__':
-    main = Main()
-    Gtk.main()
+    try:
+        main = Main()
+        Gtk.main()
+    except Exception as e:
+        error = "'An Exception occured while Launching sudoSU.\nPlease try launching sudoSU using terminal to diagnose the issue .'" 
+        zenity_msg = "zenity --error --text="+error+" --no-wrap"
+        subprocess.run(zenity_msg,shell=True)
+        print(e)

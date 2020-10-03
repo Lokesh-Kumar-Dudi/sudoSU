@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkImage" id="close_button_image">
@@ -14,7 +14,7 @@
       <object class="GtkLabel" id="tab_title_label">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">SUGAIN</property>
+        <property name="label" translatable="yes">SUDIPDIVCOR</property>
         <attributes>
           <attribute name="font-desc" value="Sans Italic 10"/>
         </attributes>
@@ -49,7 +49,7 @@
     <property name="default_height">500</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -88,68 +88,49 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">SUGAIN - apply various types of gain				  	
-									
- sugain &lt;stdin &gt;stdout [optional parameters]			   	
-									
- Required parameters:						  	
-	none (no-op)						    	
-									
- Optional parameters:						  	
-	panel=0	        =1  gain whole data set (vs. trace by trace)	
-	tpow=0.0	multiply data by t^tpow			 	
-	epow=0.0	multiply data by exp(epow*t)		    	
-	etpow=1.0	multiply data by exp(epow*t^etpow)	    	
-	gpow=1.0	take signed gpowth power of scaled data	 	
-	agc=0	   flag; 1 = do automatic gain control	     		
-	gagc=0	  flag; 1 = ... with gaussian taper			
-	wagc=0.5	agc window in seconds (use if agc=1 or gagc=1)  
-	trap=none	zero any value whose magnitude exceeds trapval  
-	clip=none	clip any value whose magnitude exceeds clipval  
-	pclip=none	clip any value greater than clipval  		
-	nclip=none	clip any value less than  clipval 		
-	qclip=1.0	clip by quantile on absolute values on trace    
-	qbal=0	  flag; 1 = balance traces by qclip and scale     	
-	pbal=0	  flag; 1 = bal traces by dividing by rms value   	
-	mbal=0	  flag; 1 = bal traces by subtracting the mean    	
-	maxbal=0	flag; 1 = balance traces by subtracting the max 
-	scale=1.0	multiply data by overall scale factor	   	
-	norm=0.0	divide data by overall scale factor	     	
-	bias=0.0	bias data by adding an overall bias value	
-	jon=0	   	flag; 1 means tpow=2, gpow=.5, qclip=.95	
-	verbose=0	verbose = 1 echoes info				
-	mark=0		apply gain only to traces with tr.mark=0	
-			=1 apply gain only to traces with tr.mark!=0    
-	vred=0	  reducing velocity of data to use with tpow		
-									
- 	tmpdir=		if non-empty, use the value as a directory path	
-			prefix for storing temporary files; else if the 
-			the CWP_TMPDIR environment variable is set use  
-			its value for the path; else use tmpfile()	
-									
- Operation order:							
- if (norm) scale/norm						  	
-									
- out(t) = scale * BAL{CLIP[AGC{[t^tpow * exp(epow * t^tpow) * ( in(t)-bias )]^gpow}]}
-									
+                    <property name="label" translatable="yes"> SUDIPDIVCOR - Dip-dependent Divergence (spreading) correction	
+ 								
+	sudipdivcor &lt;stdin &gt;stdout  [optional parms]		
+ 								
+ Required Parameters:						
+	dxcdp	distance between sucessive cdps	in meters	
+ 								
+ Optional Parameters:						
+	np=50		number of slopes			
+	tmig=0.0	times corresponding to rms velocities in vmig
+	vmig=1500.0	rms velocities corresponding to times in tmig
+	vfile=binary	(non-ascii) file containing velocities vmig(t) 
+	conv=0		=1 to apply the conventional divergence correction
+	trans=0		=1 to include transmission factors 	
+	verbose=0	=1 for diagnostic print			
+ 								
  Notes:								
-	The jon flag selects the parameter choices discussed in		
-	Claerbout's Imaging the Earth, pp 233-236.			
-									
-	Extremely large/small values may be lost during agc. Windowing  
-	these off and applying a scale in a preliminary pass through	
-	sugain may help.						
-									
-	Sugain only applies gain to traces with tr.mark=0. Use sushw,	
-	suchw, suedit, or suxedit to mark traces you do not want gained.
-	See the selfdocs of sushw, suchw, suedit, and suxedit for more	
-	information about setting header fields. Use "sukeyword mark" 
-	for more information about the mark header field.		
-									
-      debias data by using mbal=1					
-									
-      option etpow only becomes active if epow is nonzero</property>
+ The tmig, vmig arrays specify an rms velocity function of time.
+ Linear interpolation and constant extrapolation is used to determine
+ rms velocities at times not specified.  Values specified in tmig
+ must increase monotonically.					
+ 								
+ Alternatively, rms velocities may be stored in a binary file
+ containing one velocity for every time sample.  If vfile is	
+ specified, then the tmig and vmig arrays are ignored.		
+ The time of the first sample is assumed to be constant, and is
+ taken as the value of the first trace header field delrt. 	
+ 								
+ Whereas the conventional divergence correction (sudivcor) is	
+ valid only for horizontal reflectors, which have zero reflection
+ slope, the dip-dependent divergence correction is valid for any
+ reflector dip or reflection slope.  Only the conventional	
+ correction will be applied to the data if conv=1 is specified. 
+ Note that the conventional correction over-amplifies		
+ reflections from dipping beds					
+ 								
+ The transmission factor should be applied when the divergence 
+ corrected data is to be migrated with a reverse time migration 
+ based on the constant density wave equation.			
+								
+ Trace header fields accessed:  ns, dt, delrt	</property>
                     <property name="xalign">0</property>
+                    <property name="yalign">0</property>
                   </object>
                 </child>
               </object>
@@ -164,7 +145,22 @@
       </object>
     </child>
   </object>
-  <object class="GtkBox" id="sugain">
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-help</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-refresh</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-add</property>
+  </object>
+  <object class="GtkBox" id="sudipdivcor">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
@@ -172,6 +168,7 @@
       <object class="GtkScrolledWindow">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
+        <property name="hscrollbar_policy">never</property>
         <property name="shadow_type">in</property>
         <child>
           <object class="GtkViewport">
@@ -201,29 +198,12 @@
                             <property name="row_spacing">5</property>
                             <property name="column_spacing">5</property>
                             <child>
-                              <object class="GtkRadioButton" id="agc">
-                                <property name="label" translatable="yes">AGC</property>
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Do automatic gain control</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkRadioButton" id="gagc">
-                                <property name="label" translatable="yes">GAGC</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Do automatic gain control with gaussian taper</property>
-                                <property name="draw_indicator">True</property>
-                                <property name="group">agc</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">times corresponding to rms velocities in vmig</property>
+                                <property name="label" translatable="yes">tmig</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -231,13 +211,13 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="pbalance">
-                                <property name="label" translatable="yes">P Balance</property>
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Balance traces by dividing by rms value</property>
-                                <property name="draw_indicator">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">rms velocities corresponding to times in tmig
+</property>
+                                <property name="label" translatable="yes">vmig</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -245,13 +225,12 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="mbalance">
-                                <property name="label" translatable="yes">M Balance</property>
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Balance traces by subtracting the mean</property>
-                                <property name="draw_indicator">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">(non-ascii) file containing velocities vmig(t)</property>
+                                <property name="label" translatable="yes">vfile</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -259,64 +238,33 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="maxbalance">
-                                <property name="label" translatable="yes">Max Balance</property>
+                              <object class="GtkEntry" id="tmig">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Balance traces by subtracting the max</property>
-                                <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">AGC window in seconds in case of AGC/GAGC Gain</property>
-                                <property name="label" translatable="yes">WAGC           </property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Multiply data by t^tpow</property>
-                                <property name="label" translatable="yes">T Power       </property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkEntry" id="vmig">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Multiply data by exp(epow*t)</property>
-                                <property name="label" translatable="yes">E Power       </property>
+                                <property name="can_focus">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkFileChooserButton" id="vfile">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Take signed gpowth power of scaled data</property>
-                                <property name="label" translatable="yes">G Power      </property>
+                                <property name="title" translatable="yes"/>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">3</property>
                               </packing>
                             </child>
@@ -324,23 +272,50 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Multiply data by exp(epow*t^etpow)</property>
-                                <property name="label" translatable="yes">ET Power    </property>
+                                <property name="tooltip_text" translatable="yes">number of slopes</property>
+                                <property name="label" translatable="yes">np</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">0</property>
                                 <property name="top_attach">4</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkEntry" id="np">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Multiply data by overall scale factor</property>
-                                <property name="label" translatable="yes">Scale             </property>
+                                <property name="can_focus">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="conv">
+                                <property name="label" translatable="yes">conv</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">1 = to apply the conventional divergence correction</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="trans">
+                                <property name="label" translatable="yes">trans</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">1 = to include transmission factors</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">5</property>
                               </packing>
                             </child>
@@ -348,19 +323,19 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Divide data by overall scale factor</property>
-                                <property name="label" translatable="yes">Norm           </property>
+                                <property name="tooltip_text" translatable="yes">distance between sucessive cdps in meters</property>
+                                <property name="label" translatable="yes">dxcdp</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">6</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="wagc">
+                              <object class="GtkEntry" id="dxcdp">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="input_purpose">digits</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -368,71 +343,16 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="tpower">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="input_purpose">digits</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">1</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="epower">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="input_purpose">digits</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="gpower">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="input_purpose">digits</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">3</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="etpower">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">multiply data by exp(epow*t^etpow)</property>
-                                <property name="input_purpose">digits</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="scale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="input_purpose">digits</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="norm">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="input_purpose">digits</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">6</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -461,7 +381,64 @@
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <placeholder/>
+                          <object class="GtkBox">
+                            <property name="width_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="image">image2</property>
+                                <property name="relief">none</property>
+                                <signal name="clicked" handler="refresh" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Add to Workflow</property>
+                                <property name="image">image3</property>
+                                <property name="relief">none</property>
+                                <property name="always_show_image">True</property>
+                                <signal name="clicked" handler="append" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="image">image1</property>
+                                <property name="relief">none</property>
+                                <property name="always_show_image">True</property>
+                                <signal name="clicked" handler="help" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -489,7 +466,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Set the Parameters for "sugain"</property>
                         <signal name="clicked" handler="set_parameters" swapped="no"/>
                       </object>
                       <packing>
@@ -504,7 +480,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Apply "sugain" to the Input File</property>
                         <signal name="clicked" handler="run" swapped="no"/>
                       </object>
                       <packing>
@@ -524,6 +499,61 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="pack_type">end</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">names of output files corresponding to input files selected separated by comma</property>
+                            <property name="label" translatable="yes">Output files :  </property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="output_files">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="pack_type">end</property>
                     <property name="position">2</property>
                   </packing>

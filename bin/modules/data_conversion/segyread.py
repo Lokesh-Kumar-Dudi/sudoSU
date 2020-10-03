@@ -34,12 +34,9 @@ class segyread(Gtk.Box):
                 else:
                     pass
 
-        if self.parameters!="":
-            self.command = "segyread tape=infile "+ self.parameters + " >" + "outfile"
-            self.append_wf_cmd = "segyread tape=$infile "+ self.parameters + " >" + "$prefix.$infile"
-            self.parent.send_command(self.command,1)
-        else:
-            self.parent.send_message("No Parameters choosen",1)
+        self.command = "segyread tape=infile "+ self.parameters + " >" + "outfile"
+        self.append_wf_cmd = "segyread tape=$infile "+ self.parameters + " >" + "$prefix.$infile"
+        self.parent.send_command(self.command,1)
         
     
     def run(self, widget):

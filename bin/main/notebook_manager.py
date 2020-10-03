@@ -5,15 +5,16 @@ import os
 import sys
 from pathlib import Path
 home= str(Path.home())
-sys.path.append(os.path.abspath(home+'/sudoSU/bin/modules'))
+sys.path.append(os.path.abspath(str(Path(__file__).parent.parent)+'/modules'))
 
 class manager:
     def __init__(self,parent):
         self.parent = parent
-        self.tabs = {'SUGAIN':0,'SUDIVCOR':0,'SUSORT':0,'SUWIND':0,'SUXWIGB':0,
-                        'SUXIMAGE':0,'SUPSWIGB':0,'SUPSIMAGE':0,'SUCDDECON':0,'SUPEF':0,'SUSHAPE':0,
+        self.tabs = {'SUGAIN':0,'SUDIVCOR':0,'SUDIPDIVCOR':0,'SUACOR':0,'SUCONV':0,'SUXCOR':0,'SUSORT':0,'SUWIND':0,
+                        'SUXWIGB':0,'SUXIMAGE':0,'SUPSWIGB':0,'SUPSIMAGE':0,'SUCDDECON':0,'SUPEF':0,'SUSHAPE':0,
                         'SUFILTER':0,'SUGETHW':0,'SUSHW':0,'A2B':0,'SUNMO':0,'SUSTACK':0,'SUFFT':0,'SUSPECFX':0,
-                        'SUVELAN':0,'SUMUTE':0,'SURADON':0,'SEGYREAD':0}
+                        'SUVELAN':0,'SUMUTE':0,'SURADON':0,'SEGYREAD':0
+                        }
         
     
     def add_tab(self,tab_id):
@@ -35,6 +36,14 @@ class manager:
                 self.tabs['SUDIVCOR'] = 1
             else:
                 pass
+        elif tab_id == "SUDIPDIVCOR":
+            from amplitude import sudipdivcor
+            if self.tabs['SUDIPDIVCOR'] != 1:
+                self.append_tab(self.parent, sudipdivcor.nb_page(self.parent))
+                self.tabs['SUDIPDIVCOR'] = 1
+            else:
+                pass
+
         elif tab_id == "SUSORT":
             from sorting_windowing import susort
             if self.tabs['SUSORT'] != 1:
@@ -182,6 +191,27 @@ class manager:
                     self.tabs['SEGYREAD'] = 1
                 else:
                     pass 
+        elif tab_id=="SUACOR":
+            from convolution_correlation import suacor
+            if self.tabs['SUACOR']!=1:
+                self.append_tab(self.parent, suacor.nb_page(self.parent))
+                self.tabs['SUACOR'] = 1
+            else:
+                pass
+        elif tab_id=="SUCONV":
+            from convolution_correlation import suconv
+            if self.tabs['SUCONV']!=1:
+                self.append_tab(self.parent, suconv.nb_page(self.parent))
+                self.tabs['SUCONV'] = 1
+            else:
+                pass 
+        elif tab_id=="SUXCOR":
+            from convolution_correlation import suxcor
+            if self.tabs['SUXCOR']!=1:
+                self.append_tab(self.parent, suxcor.nb_page(self.parent))
+                self.tabs['SUXCOR'] = 1
+            else:
+                pass   
     
     def append_tab(self, parent, arg):  
         self.child =  arg
